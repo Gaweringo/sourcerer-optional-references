@@ -67,6 +67,12 @@ Used to pass styling options to the top-right box showing the language used. `ra
 
 *Default*: `(radius: 3pt, outset: 1.75pt, fill: rgb("#ffbfbf"), stroke: 1pt + rgb("#ff8a8a"))`
 
+### `enable-references`: `bool`
+Can be used to disable references by changing it from the default value to `false`.
+This can be usefull if your normal text includes ends with something that looks like a <label> but should not be interpreted as one.
+
+*Default*: `true`
+
 ## Notes
 - If any more customization is needed, feel free to open an issue or send a PR. These may not however be accepted, depending on their nature.
 - `sourcerer` uses the `"sourcerer"` `kind` for its figures, used for referencing lines. This means that using this same kind will cause issues in your documents.

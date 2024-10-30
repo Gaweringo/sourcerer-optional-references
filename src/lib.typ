@@ -18,6 +18,7 @@
     fill: rgb("#ffbfbf"),
     stroke: 1pt + rgb("#ff8a8a")
   ),
+  enable-references: true,
   source
 ) = {
   show raw.line: set text(..text-style)
@@ -27,18 +28,20 @@
   
   let label-regex = regex("<((\w|_|-)+)>[ \t\r\f]*(\n|$)")
 
-  let labels = source
-    .text
-    .split("\n")
-    .map(line => {
-      let match = line.match(label-regex)
-  
-      if match != none {
-        match.captures.at(0)
-      } else {
-        none
-      }
-    })
+  let labels =  if enable-references {
+    source
+      .text
+      .split("\n")
+      .map(line => {
+        let match = line.match(label-regex)
+    
+        if match != none {
+          match.captures.at(0)
+        } else {
+          none
+        }
+      })
+  } else { none }
 
   // We need to have different lines use different tables to allow for the text after the lang-box to go in its horizontal space.
   // This means we need to calculate a size for the number column. This requires AOT knowledge of the maximum number horizontal space.
@@ -48,10 +51,12 @@
     raw(str(number))
   )
 
-  let unlabelled-source = source.text.replace(
-    label-regex,
-    "\n"
-  )
+  let unlabelled-source = if enable-references {
+    source.text.replace(
+      label-regex,
+      "\n"
+    )
+  } else { source.text }
 
   show raw.where(block: true): it => style(styles => {
     let lines = lines
@@ -99,11 +104,13 @@
                 )
               },
               {
-                let line-label = labels.at(line.number - 1)
-                
+                let line-label = if enable-references {
+                  labels.at(line.number - 1)
+                } else { none }
+
                 if line-label != none {
                   show figure: it => it.body
-                  
+
                   counter(figure.where(kind: "sourcerer")).update(line.number - 1)
                   [
                     #figure(supplement: "Line", kind: "sourcerer", outlined: false, line)
